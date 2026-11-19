@@ -1,5 +1,14 @@
 # Golf tournament simulator
 
+Monte Carlo forecasts for PGA Tour stroke-play events, built from real round scores. The project:
+
+- **Backtests** a simple skill model against past tournaments, scored by hit rate and Brier score (`pga_backtest.py`).
+- **Saves pre-tournament forecasts** before an event starts and scores them against official results afterwards (`pga_forecast.py`).
+- **Renders a static HTML report** for any saved forecast (`pga_report.py`).
+- **Publishes an interactive model lab** on Vercel (`site/`). Visitors change assumptions, weight PGA Tour strokes-gained, traditional, recent-form and course-fit stats, add their own custom fields, and rerun thousands of simulated tournaments in the browser.
+
+The core uses only the Python standard library; data comes from ESPN's and PGA Tour's public (unofficial) endpoints. It is a research and learning tool, not betting advice.
+
 The original neural-network tournament and shot-prediction scripts are synthetic demonstrations, not trained PGA Tour models. `pga_backtest.py` adds an independent, reproducible historical baseline using actual PGA Tour results.
 
 ## Historical Monte Carlo study
