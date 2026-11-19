@@ -62,7 +62,7 @@ The field and historical inputs in `site/data/model.json` are a fixed snapshot, 
 
 ```bash
 python3 export_dashboard.py forecast-records/forecasts/EVENT_ID.json --history-start 2022
-vercel deploy site --prod --project golf-tournament-forecast
+vercel deploy --prod --project golf-tournament-forecast
 ```
 
 The exporter checks that historical round counts match the saved forecast and refuses mismatches. This check cannot detect source revisions that preserve round counts; preserve original data snapshots if exact historical reproducibility matters. The model inputs are published when deployed. The standalone report from `pga_report.py` remains available separately.
@@ -89,3 +89,5 @@ The lab groups assumptions into scenario selection, field strength and uncertain
 Try **Course plays hard** (approach and recovery emphasis), **Birdie contest**, or **Rookie contender**. For the rookie scenario, select a known rookie manually: the data does not identify rookies or predict participation. It applies a hypothetical −0.3 strokes per round and 1.2× variation to the selected player, with 30 prior rounds. These are sensitivity experiments, not fitted predictions. A hard course scenario changes skill emphasis; it does not forecast absolute scores or weather.
 
 Switching presets restores round variation, shrinkage and player adjustments, replaces all stat weights, and disables custom-field weights so earlier experiments do not leak into the scenario. Player selection and simulation count are retained. Run the simulation after each change.
+
+The root `vercel.json` publishes only `site/` as the output directory for repository-based deployments. Run the deploy command from the repository root; deploying the repository without this setting serves the dashboard under `/site/` and leaves `/` without a homepage.
