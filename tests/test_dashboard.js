@@ -16,6 +16,17 @@ vm.runInNewContext(fs.readFileSync('site/app.js','utf8'),context);
 setImmediate(()=>{
   assert.equal(elements['chart'].children.length,10);
   assert.equal(elements['event-name'].textContent,'The RSM Classic');
+  const firstRow = elements['chart'].children[0];
+  assert.equal(firstRow.children.length, 5);
+  assert.equal(firstRow.children[0].textContent, '1');
+  assert.equal(firstRow.children[1].textContent, model.players[0].name);
+  assert.equal(firstRow.children[1].scope, 'row');
+  const savedSkill = firstRow.children[3].textContent;
+  elements['skill'].value='2'; elements['skill'].listeners.input();
+  elements['show'].listeners.change();
+  assert.equal(elements['chart'].children[0].children[3].textContent, savedSkill,
+    'Displayed skill stays tied to the forecast until the simulation runs');
+  elements['skill'].value='1'; elements['skill'].listeners.input();
   assert(elements['formula'].textContent.includes('historical'));
   elements['run'].listeners.click();
   assert.equal(elements['chart'].children.length,10);
