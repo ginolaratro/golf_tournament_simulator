@@ -9,7 +9,7 @@ class Element {
 }
 const elements = {};
 const document = { getElementById: id => elements[id] ||= new Element(id), createElement: () => new Element() };
-for (const [id,value] of Object.entries({volatility:'2.8',prior:'20',adjustment:'0',runs:'1000',show:'10'})) document.getElementById(id).value=value;
+for (const [id,value] of Object.entries({volatility:'2.8',prior:'20',adjustment:'0',skill:'1', 'player-volatility':'1',runs:'1000',show:'10'})) document.getElementById(id).value=value;
 const model=JSON.parse(fs.readFileSync('site/data/model.json','utf8'));
 const context={document,fetch:async()=>({ok:true,json:async()=>model}),setTimeout:fn=>fn(),console,Math};
 vm.runInNewContext(fs.readFileSync('site/app.js','utf8'),context);
@@ -21,6 +21,10 @@ setImmediate(()=>{
   assert.equal(elements['chart'].children.length,10);
   assert(elements['result-summary'].textContent.includes('1,000'));
   assert.equal(elements['run'].disabled,false);
+  assert.equal(elements['progress-label'].textContent,'1,000 / 1,000 tournaments');
+  assert.equal(elements['progress-bar'].style.width,'100%');
+  assert.equal(elements['recent-winners'].children.length,4);
+  assert.equal(elements['settings'].disabled,false);
   elements['show'].value='20';elements['show'].listeners.change();
   assert.equal(elements['chart'].children.length,20);
   elements['prior'].value='50';elements['prior'].listeners.input();

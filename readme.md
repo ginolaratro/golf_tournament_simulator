@@ -47,7 +47,7 @@ The report charts player win probabilities, explains the simulation, and shows t
 
 ## Interactive Vercel dashboard
 
-`site/` contains a static interactive model lab. The initial chart shows a saved forecast. Changing variation, prior strength, or a player's score adjustment and clicking **Run simulation** runs new Monte Carlo trials in the visitor's browser. Experiments are not saved and are not pre-event forecasts. Results vary slightly between runs due to random sampling.
+`site/` contains a static interactive model lab. The initial chart shows a saved forecast. Changing variation, prior strength, historical skill influence, or a selected player's score and volatility adjustments and clicking **Run simulation** runs new Monte Carlo trials in the visitor's browser. The progress bar, recent winners, and probabilities update from actual simulation batches. Experiments are not saved and are not pre-event forecasts. Results vary slightly between runs due to random sampling.
 
 The field and historical inputs in `site/data/model.json` are a fixed snapshot, not a live field or automatically updated data feed. To update it with a saved forecast, reconstruct historical inputs and redeploy:
 
