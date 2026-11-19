@@ -1,0 +1,894 @@
+{
+  "schema_version": 1,
+  "model": "field-relative-rounds-v1",
+  "event_id": "401850981",
+  "event": "The RSM Classic",
+  "event_start": "2026-11-19T05:00Z",
+  "created_at": "2026-11-19T03:10:26.369651+00:00",
+  "simulations": 10000,
+  "seed": 42,
+  "players": [
+    {
+      "id": "5077389",
+      "name": "Ben James",
+      "win_probability": 0.0234,
+      "prior_rounds": 68
+    },
+    {
+      "id": "5211425",
+      "name": "Blades Brown",
+      "win_probability": 0.0219,
+      "prior_rounds": 75
+    },
+    {
+      "id": "2230",
+      "name": "Tony Finau",
+      "win_probability": 0.0185,
+      "prior_rounds": 408
+    },
+    {
+      "id": "5215013",
+      "name": "Jackson Koivun",
+      "win_probability": 0.0185,
+      "prior_rounds": 72
+    },
+    {
+      "id": "9530",
+      "name": "Maverick McNealy",
+      "win_probability": 0.0181,
+      "prior_rounds": 401
+    },
+    {
+      "id": "10054",
+      "name": "Denny McCarthy",
+      "win_probability": 0.0174,
+      "prior_rounds": 442
+    },
+    {
+      "id": "4513",
+      "name": "Keegan Bradley",
+      "win_probability": 0.0174,
+      "prior_rounds": 390
+    },
+    {
+      "id": "8906",
+      "name": "Keith Mitchell",
+      "win_probability": 0.0174,
+      "prior_rounds": 416
+    },
+    {
+      "id": "9506",
+      "name": "Jordan Smith",
+      "win_probability": 0.0153,
+      "prior_rounds": 136
+    },
+    {
+      "id": "1225",
+      "name": "Brian Harman",
+      "win_probability": 0.015,
+      "prior_rounds": 440
+    },
+    {
+      "id": "4425904",
+      "name": "Michael Thorbjornsen",
+      "win_probability": 0.0142,
+      "prior_rounds": 208
+    },
+    {
+      "id": "6798",
+      "name": "Brooks Koepka",
+      "win_probability": 0.0141,
+      "prior_rounds": 127
+    },
+    {
+      "id": "10030",
+      "name": "Zach Bauchou",
+      "win_probability": 0.0139,
+      "prior_rounds": 102
+    },
+    {
+      "id": "9243",
+      "name": "Christiaan Bezuidenhout",
+      "win_probability": 0.0138,
+      "prior_rounds": 417
+    },
+    {
+      "id": "1651",
+      "name": "Billy Horschel",
+      "win_probability": 0.0133,
+      "prior_rounds": 354
+    },
+    {
+      "id": "5408",
+      "name": "Harris English",
+      "win_probability": 0.0132,
+      "prior_rounds": 381
+    },
+    {
+      "id": "4589438",
+      "name": "Harry Hall",
+      "win_probability": 0.0131,
+      "prior_rounds": 365
+    },
+    {
+      "id": "4921329",
+      "name": "Michael Brennan",
+      "win_probability": 0.0131,
+      "prior_rounds": 113
+    },
+    {
+      "id": "11456",
+      "name": "Doug Ghim",
+      "win_probability": 0.0127,
+      "prior_rounds": 418
+    },
+    {
+      "id": "4602218",
+      "name": "Davis Thompson",
+      "win_probability": 0.0125,
+      "prior_rounds": 361
+    },
+    {
+      "id": "10505",
+      "name": "J.T. Poston",
+      "win_probability": 0.0122,
+      "prior_rounds": 430
+    },
+    {
+      "id": "5502",
+      "name": "Andrew Putnam",
+      "win_probability": 0.012,
+      "prior_rounds": 436
+    },
+    {
+      "id": "10522",
+      "name": "Eric Cole",
+      "win_probability": 0.0119,
+      "prior_rounds": 431
+    },
+    {
+      "id": "11101",
+      "name": "Max Greyserman",
+      "win_probability": 0.0118,
+      "prior_rounds": 266
+    },
+    {
+      "id": "4791222",
+      "name": "Mac Meissner",
+      "win_probability": 0.0113,
+      "prior_rounds": 249
+    },
+    {
+      "id": "9484",
+      "name": "Alex Smalley",
+      "win_probability": 0.0113,
+      "prior_rounds": 434
+    },
+    {
+      "id": "11385",
+      "name": "Rico Hoey",
+      "win_probability": 0.0111,
+      "prior_rounds": 280
+    },
+    {
+      "id": "257",
+      "name": "Matt Kuchar",
+      "win_probability": 0.0108,
+      "prior_rounds": 333
+    },
+    {
+      "id": "4858859",
+      "name": "Rasmus Neergaard-Petersen",
+      "win_probability": 0.0106,
+      "prior_rounds": 90
+    },
+    {
+      "id": "3449",
+      "name": "Chris Kirk",
+      "win_probability": 0.0102,
+      "prior_rounds": 387
+    },
+    {
+      "id": "5338",
+      "name": "Bud Cauley",
+      "win_probability": 0.0099,
+      "prior_rounds": 211
+    },
+    {
+      "id": "4691931",
+      "name": "Ricky Castillo",
+      "win_probability": 0.0098,
+      "prior_rounds": 173
+    },
+    {
+      "id": "5075652",
+      "name": "A.J. Ewart",
+      "win_probability": 0.0098,
+      "prior_rounds": 92
+    },
+    {
+      "id": "9143",
+      "name": "Mark Hubbard",
+      "win_probability": 0.0098,
+      "prior_rounds": 448
+    },
+    {
+      "id": "6922",
+      "name": "Ben Kohles",
+      "win_probability": 0.0097,
+      "prior_rounds": 295
+    },
+    {
+      "id": "9658",
+      "name": "Taylor Pendrith",
+      "win_probability": 0.0097,
+      "prior_rounds": 396
+    },
+    {
+      "id": "4351896",
+      "name": "Kristoffer Ventura",
+      "win_probability": 0.0091,
+      "prior_rounds": 159
+    },
+    {
+      "id": "11333",
+      "name": "Greyson Sigg",
+      "win_probability": 0.009,
+      "prior_rounds": 334
+    },
+    {
+      "id": "4408320",
+      "name": "Kevin Roy",
+      "win_probability": 0.009,
+      "prior_rounds": 261
+    },
+    {
+      "id": "8961",
+      "name": "Sepp Straka",
+      "win_probability": 0.009,
+      "prior_rounds": 403
+    },
+    {
+      "id": "4426181",
+      "name": "Sam Stevens",
+      "win_probability": 0.0089,
+      "prior_rounds": 412
+    },
+    {
+      "id": "4837368",
+      "name": "Pierceson Coody",
+      "win_probability": 0.0086,
+      "prior_rounds": 260
+    },
+    {
+      "id": "5217048",
+      "name": "Johnny Keefer",
+      "win_probability": 0.0085,
+      "prior_rounds": 118
+    },
+    {
+      "id": "4425898",
+      "name": "Austin Eckroat",
+      "win_probability": 0.0084,
+      "prior_rounds": 370
+    },
+    {
+      "id": "6931",
+      "name": "Mackenzie Hughes",
+      "win_probability": 0.0084,
+      "prior_rounds": 410
+    },
+    {
+      "id": "10562",
+      "name": "Hayden Springer",
+      "win_probability": 0.0083,
+      "prior_rounds": 211
+    },
+    {
+      "id": "4408315",
+      "name": "Vince Whaley",
+      "win_probability": 0.0083,
+      "prior_rounds": 357
+    },
+    {
+      "id": "4858572",
+      "name": "Ryo Hisatsune",
+      "win_probability": 0.0083,
+      "prior_rounds": 294
+    },
+    {
+      "id": "6825",
+      "name": "Patrick Rodgers",
+      "win_probability": 0.0082,
+      "prior_rounds": 460
+    },
+    {
+      "id": "11183",
+      "name": "Trace Crowe",
+      "win_probability": 0.0081,
+      "prior_rounds": 147
+    },
+    {
+      "id": "4358083",
+      "name": "Patrick Fishburn",
+      "win_probability": 0.008,
+      "prior_rounds": 231
+    },
+    {
+      "id": "9788",
+      "name": "Matt Atkins",
+      "win_probability": 0.008,
+      "prior_rounds": 20
+    },
+    {
+      "id": "10577",
+      "name": "Aaron Wise",
+      "win_probability": 0.0079,
+      "prior_rounds": 166
+    },
+    {
+      "id": "5215039",
+      "name": "Luke Clanton",
+      "win_probability": 0.0078,
+      "prior_rounds": 155
+    },
+    {
+      "id": "5209442",
+      "name": "Neal Shipley",
+      "win_probability": 0.0075,
+      "prior_rounds": 113
+    },
+    {
+      "id": "9040",
+      "name": "Zac Blair",
+      "win_probability": 0.0073,
+      "prior_rounds": 289
+    },
+    {
+      "id": "10664",
+      "name": "Taylor Moore",
+      "win_probability": 0.0071,
+      "prior_rounds": 415
+    },
+    {
+      "id": "8910",
+      "name": "Ben Silverman",
+      "win_probability": 0.0071,
+      "prior_rounds": 223
+    },
+    {
+      "id": "4404991",
+      "name": "Lee Hodges",
+      "win_probability": 0.007,
+      "prior_rounds": 418
+    },
+    {
+      "id": "11332",
+      "name": "Andrew Novak",
+      "win_probability": 0.0069,
+      "prior_rounds": 420
+    },
+    {
+      "id": "4426182",
+      "name": "Steven Fisk",
+      "win_probability": 0.0069,
+      "prior_rounds": 171
+    },
+    {
+      "id": "5882",
+      "name": "Emiliano Grillo",
+      "win_probability": 0.0069,
+      "prior_rounds": 435
+    },
+    {
+      "id": "4585548",
+      "name": "Sami V\u00e4lim\u00e4ki",
+      "win_probability": 0.0067,
+      "prior_rounds": 205
+    },
+    {
+      "id": "4671",
+      "name": "John Parry",
+      "win_probability": 0.0067,
+      "prior_rounds": 110
+    },
+    {
+      "id": "9600",
+      "name": "Paul Peterson",
+      "win_probability": 0.0067,
+      "prior_rounds": 119
+    },
+    {
+      "id": "5548",
+      "name": "Adam Hadwin",
+      "win_probability": 0.0066,
+      "prior_rounds": 361
+    },
+    {
+      "id": "4587989",
+      "name": "Chandler Phillips",
+      "win_probability": 0.0062,
+      "prior_rounds": 251
+    },
+    {
+      "id": "9127",
+      "name": "Adam Svensson",
+      "win_probability": 0.0061,
+      "prior_rounds": 458
+    },
+    {
+      "id": "10548",
+      "name": "Matt Wallace",
+      "win_probability": 0.006,
+      "prior_rounds": 337
+    },
+    {
+      "id": "4410612",
+      "name": "Takumi Kanaya",
+      "win_probability": 0.006,
+      "prior_rounds": 200
+    },
+    {
+      "id": "4699329",
+      "name": "Jesper Svensson",
+      "win_probability": 0.0059,
+      "prior_rounds": 162
+    },
+    {
+      "id": "9144",
+      "name": "Justin Lower",
+      "win_probability": 0.0059,
+      "prior_rounds": 425
+    },
+    {
+      "id": "11056",
+      "name": "Austin Smotherman",
+      "win_probability": 0.0058,
+      "prior_rounds": 304
+    },
+    {
+      "id": "4982182",
+      "name": "Jackson Suber",
+      "win_probability": 0.0058,
+      "prior_rounds": 171
+    },
+    {
+      "id": "11253",
+      "name": "Rasmus H\u00f8jgaard",
+      "win_probability": 0.0057,
+      "prior_rounds": 179
+    },
+    {
+      "id": "5573",
+      "name": "Henrik Norlander",
+      "win_probability": 0.0057,
+      "prior_rounds": 316
+    },
+    {
+      "id": "6701",
+      "name": "David Lipsky",
+      "win_probability": 0.0057,
+      "prior_rounds": 407
+    },
+    {
+      "id": "676",
+      "name": "Lucas Glover",
+      "win_probability": 0.0057,
+      "prior_rounds": 422
+    },
+    {
+      "id": "11143",
+      "name": "Carson Young",
+      "win_probability": 0.0055,
+      "prior_rounds": 296
+    },
+    {
+      "id": "4638",
+      "name": "Ben Martin",
+      "win_probability": 0.0053,
+      "prior_rounds": 280
+    },
+    {
+      "id": "4267",
+      "name": "S.Y. Noh",
+      "win_probability": 0.0052,
+      "prior_rounds": 181
+    },
+    {
+      "id": "9364",
+      "name": "Erik van Rooyen",
+      "win_probability": 0.0052,
+      "prior_rounds": 334
+    },
+    {
+      "id": "1077",
+      "name": "Kevin Streelman",
+      "win_probability": 0.005,
+      "prior_rounds": 330
+    },
+    {
+      "id": "10048",
+      "name": "Nick Hardy",
+      "win_probability": 0.0048,
+      "prior_rounds": 348
+    },
+    {
+      "id": "4361934",
+      "name": "John VanDerLaan",
+      "win_probability": 0.0048,
+      "prior_rounds": 87
+    },
+    {
+      "id": "3454",
+      "name": "Brendon Todd",
+      "win_probability": 0.0046,
+      "prior_rounds": 306
+    },
+    {
+      "id": "3980",
+      "name": "Patton Kizzire",
+      "win_probability": 0.0046,
+      "prior_rounds": 368
+    },
+    {
+      "id": "5369915",
+      "name": "Muzzy Donohue",
+      "win_probability": 0.0046,
+      "prior_rounds": 6
+    },
+    {
+      "id": "9221",
+      "name": "Haotong Li",
+      "win_probability": 0.0046,
+      "prior_rounds": 104
+    },
+    {
+      "id": "4423323",
+      "name": "Dylan Wu",
+      "win_probability": 0.0045,
+      "prior_rounds": 362
+    },
+    {
+      "id": "4565482",
+      "name": "Will Gordon",
+      "win_probability": 0.0045,
+      "prior_rounds": 252
+    },
+    {
+      "id": "2283",
+      "name": "Brice Garnett",
+      "win_probability": 0.0043,
+      "prior_rounds": 338
+    },
+    {
+      "id": "2571",
+      "name": "Martin Laird",
+      "win_probability": 0.0043,
+      "prior_rounds": 263
+    },
+    {
+      "id": "6962",
+      "name": "Adrien Saddier",
+      "win_probability": 0.0043,
+      "prior_rounds": 68
+    },
+    {
+      "id": "5076011",
+      "name": "Adrien Dumont de Chassart",
+      "win_probability": 0.0042,
+      "prior_rounds": 169
+    },
+    {
+      "id": "5150294",
+      "name": "David Ford",
+      "win_probability": 0.0042,
+      "prior_rounds": 86
+    },
+    {
+      "id": "1614",
+      "name": "Webb Simpson",
+      "win_probability": 0.0041,
+      "prior_rounds": 217
+    },
+    {
+      "id": "9569",
+      "name": "Tyler Duncan",
+      "win_probability": 0.0041,
+      "prior_rounds": 292
+    },
+    {
+      "id": "10057",
+      "name": "Chad Ramey",
+      "win_probability": 0.0039,
+      "prior_rounds": 411
+    },
+    {
+      "id": "10372",
+      "name": "Adam Schenk",
+      "win_probability": 0.0039,
+      "prior_rounds": 422
+    },
+    {
+      "id": "10863",
+      "name": "Cam Davis",
+      "win_probability": 0.0039,
+      "prior_rounds": 355
+    },
+    {
+      "id": "5147097",
+      "name": "Karl Vilips",
+      "win_probability": 0.0039,
+      "prior_rounds": 129
+    },
+    {
+      "id": "5765",
+      "name": "Michael Johnson",
+      "win_probability": 0.0039,
+      "prior_rounds": 7
+    },
+    {
+      "id": "10231",
+      "name": "Stefano Mazzoli",
+      "win_probability": 0.0038,
+      "prior_rounds": 12
+    },
+    {
+      "id": "11098",
+      "name": "Cameron Champ",
+      "win_probability": 0.0038,
+      "prior_rounds": 259
+    },
+    {
+      "id": "8889",
+      "name": "Zecheng Dou",
+      "win_probability": 0.0038,
+      "prior_rounds": 205
+    },
+    {
+      "id": "11383",
+      "name": "Max McGreevy",
+      "win_probability": 0.0035,
+      "prior_rounds": 339
+    },
+    {
+      "id": "11393",
+      "name": "Garrick Higgo",
+      "win_probability": 0.0035,
+      "prior_rounds": 341
+    },
+    {
+      "id": "4350033",
+      "name": "Rikuya Hoshino",
+      "win_probability": 0.0035,
+      "prior_rounds": 86
+    },
+    {
+      "id": "1059",
+      "name": "Luke List",
+      "win_probability": 0.0034,
+      "prior_rounds": 332
+    },
+    {
+      "id": "10990",
+      "name": "Jimmy Stanger",
+      "win_probability": 0.0033,
+      "prior_rounds": 97
+    },
+    {
+      "id": "6196",
+      "name": "Joel Dahmen",
+      "win_probability": 0.0033,
+      "prior_rounds": 400
+    },
+    {
+      "id": "5362018",
+      "name": "Calen Sanderson",
+      "win_probability": 0.0032,
+      "prior_rounds": 4
+    },
+    {
+      "id": "3970",
+      "name": "Troy Merritt",
+      "win_probability": 0.0029,
+      "prior_rounds": 298
+    },
+    {
+      "id": "4585549",
+      "name": "Marco Penge",
+      "win_probability": 0.0029,
+      "prior_rounds": 82
+    },
+    {
+      "id": "508",
+      "name": "Jonathan Byrd",
+      "win_probability": 0.0028,
+      "prior_rounds": 169
+    },
+    {
+      "id": "10588",
+      "name": "Jeremy Paul",
+      "win_probability": 0.0026,
+      "prior_rounds": 115
+    },
+    {
+      "id": "4358081",
+      "name": "Alejandro Tosti",
+      "win_probability": 0.0025,
+      "prior_rounds": 210
+    },
+    {
+      "id": "5075548",
+      "name": "Kensei Hirata",
+      "win_probability": 0.0025,
+      "prior_rounds": 91
+    },
+    {
+      "id": "5574",
+      "name": "David Lingmerth",
+      "win_probability": 0.0025,
+      "prior_rounds": 134
+    },
+    {
+      "id": "10058",
+      "name": "Davis Riley",
+      "win_probability": 0.0024,
+      "prior_rounds": 410
+    },
+    {
+      "id": "3257",
+      "name": "David Skinns",
+      "win_probability": 0.0024,
+      "prior_rounds": 264
+    },
+    {
+      "id": "5692",
+      "name": "Peter Malnati",
+      "win_probability": 0.0024,
+      "prior_rounds": 379
+    },
+    {
+      "id": "5113338",
+      "name": "Davis Chatfield",
+      "win_probability": 0.0021,
+      "prior_rounds": 72
+    },
+    {
+      "id": "10596",
+      "name": "Matthieu Pavon",
+      "win_probability": 0.002,
+      "prior_rounds": 230
+    },
+    {
+      "id": "11387",
+      "name": "Hank Lebioda",
+      "win_probability": 0.002,
+      "prior_rounds": 208
+    },
+    {
+      "id": "9517",
+      "name": "Austin Cook",
+      "win_probability": 0.002,
+      "prior_rounds": 219
+    },
+    {
+      "id": "4408318",
+      "name": "Jeffrey Kang",
+      "win_probability": 0.0019,
+      "prior_rounds": 85
+    },
+    {
+      "id": "4408319",
+      "name": "Danny Walker",
+      "win_probability": 0.0019,
+      "prior_rounds": 146
+    },
+    {
+      "id": "4868733",
+      "name": "Joe Highsmith",
+      "win_probability": 0.0019,
+      "prior_rounds": 233
+    },
+    {
+      "id": "5139663",
+      "name": "Gordon Sargent",
+      "win_probability": 0.0019,
+      "prior_rounds": 108
+    },
+    {
+      "id": "5619",
+      "name": "Robert Streb",
+      "win_probability": 0.0017,
+      "prior_rounds": 192
+    },
+    {
+      "id": "4610387",
+      "name": "Shad Tuten",
+      "win_probability": 0.0016,
+      "prior_rounds": 4
+    },
+    {
+      "id": "6999",
+      "name": "Nicholas Lindheim",
+      "win_probability": 0.0015,
+      "prior_rounds": 68
+    },
+    {
+      "id": "1264",
+      "name": "Camilo Villegas",
+      "win_probability": 0.0014,
+      "prior_rounds": 280
+    },
+    {
+      "id": "4844",
+      "name": "Harry Higgs",
+      "win_probability": 0.0014,
+      "prior_rounds": 291
+    },
+    {
+      "id": "4618114",
+      "name": "Chandler Blanchet",
+      "win_probability": 0.0013,
+      "prior_rounds": 95
+    },
+    {
+      "id": "3683",
+      "name": "Rafael Campos",
+      "win_probability": 0.0012,
+      "prior_rounds": 217
+    },
+    {
+      "id": "4375977",
+      "name": "Pontus Nyholm",
+      "win_probability": 0.0012,
+      "prior_rounds": 73
+    },
+    {
+      "id": "2552",
+      "name": "Kevin Kisner",
+      "win_probability": 0.0011,
+      "prior_rounds": 208
+    },
+    {
+      "id": "4723205",
+      "name": "Tyler Collet",
+      "win_probability": 0.0011,
+      "prior_rounds": 34
+    },
+    {
+      "id": "7120",
+      "name": "Marcelo Rozo",
+      "win_probability": 0.001,
+      "prior_rounds": 71
+    },
+    {
+      "id": "4832046",
+      "name": "Nick Dunlap",
+      "win_probability": 0.0009,
+      "prior_rounds": 214
+    },
+    {
+      "id": "3089127",
+      "name": "Francisco Bid\u00e9",
+      "win_probability": 0.0005,
+      "prior_rounds": 4
+    },
+    {
+      "id": "1548",
+      "name": "Ryan Brehm",
+      "win_probability": 0.0004,
+      "prior_rounds": 223
+    },
+    {
+      "id": "11395",
+      "name": "Christo Lamprecht",
+      "win_probability": 0.0002,
+      "prior_rounds": 79
+    },
+    {
+      "id": "1564",
+      "name": "Jeff Overton",
+      "win_probability": 0.0002,
+      "prior_rounds": 21
+    }
+  ]
+}
