@@ -12,7 +12,7 @@ const elements = {};
 const document = { getElementById: id => elements[id] ||= new Element(id), createElement: () => new Element() };
 for (const [id,value] of Object.entries({preset:'history',volatility:'2.8',prior:'20',adjustment:'0',skill:'1', 'player-volatility':'1',runs:'1000',show:'10'})) document.getElementById(id).value=value;
 const model=JSON.parse(fs.readFileSync('site/data/model.json','utf8'));
-const context={document,fetch:async()=>({ok:true,json:async()=>model}),setTimeout:fn=>fn(),console,Math};
+const context={document,fetch:async()=>({ok:true,json:async()=>model}),setTimeout:fn=>fn(),console,Math:Object.assign(Object.create(Math), {random: () => 0.5})};
 vm.runInNewContext(fs.readFileSync('site/app.js','utf8'),context);
 setImmediate(()=>{
   assert.equal(elements['chart'].children.length,10);
@@ -22,11 +22,17 @@ setImmediate(()=>{
   assert.equal(firstRow.children[0].textContent, '1');
   assert.equal(firstRow.children[1].textContent, model.players[0].name);
   assert.equal(firstRow.children[1].scope, 'row');
+  const flatten = node => node.textContent + node.children.map(flatten).join(' ');
+  assert(elements['winner-reason'].textContent.includes('saved forecast'));
+  assert(flatten(elements['winner-math']).includes('Individual trial draws were not stored'));
+  const savedExplanation = flatten(elements['winner-math']);
   const savedSkill = firstRow.children[3].textContent;
   elements['skill'].value='2'; elements['skill'].listeners.input();
   elements['show'].listeners.change();
   assert.equal(elements['chart'].children[0].children[3].textContent, savedSkill,
     'Displayed skill stays tied to the forecast until the simulation runs');
+  assert.equal(flatten(elements['winner-math']), savedExplanation);
+  assert(elements['math-status'].textContent.includes('Settings changed'));
   elements['skill'].value='1'; elements['skill'].listeners.input();
   assert(elements['formula'].textContent.includes('historical'));
   elements['run'].listeners.click();
@@ -103,6 +109,26 @@ setImmediate(()=>{
   assert(elements['formula'].textContent.includes('Stats and custom fields: 0.00'));
   find(elements['custom-list'],'remove-custom-1').listeners.click();
   assert.equal(elements['custom-list'].children.length,0);
+  // Deterministic random draws make the exact winner and win count auditable.
+  elements['reset'].listeners.click();
+  elements['skill'].value='0'; elements['skill'].listeners.input();
+  elements['player'].value=first.id; elements['player'].listeners.change();
+  elements['adjustment'].value='-1'; elements['adjustment'].listeners.input();
+  elements['runs'].value='1000';
+  elements['run'].listeners.click();
+  assert(elements['winner-reason'].textContent.includes(first.name));
+  assert(elements['winner-reason'].textContent.includes('1,000 ÷ 1,000 × 100 = 100.00%'));
+  const explanation = flatten(elements['winner-math']);
+  assert(explanation.includes('−1') || explanation.includes('-1.00 adjustment'));
+  assert(explanation.includes('Actual final trial from this run'));
+  assert(explanation.includes('σ = √4 × 2.80'));
+  assert(explanation.includes('No LLM'));
+  const expectedScore = -4 + 5.6 * Math.sqrt(-2 * Math.log(0.5)) * Math.cos(Math.PI);
+  assert(explanation.includes(expectedScore.toFixed(4)));
+  elements['adjustment'].value='1'; elements['adjustment'].listeners.input();
+  elements['show'].listeners.change();
+  assert.equal(flatten(elements['winner-math']), explanation, 'Result explanation retains captured inputs');
+  console.log('Winner explanation shows exact counts, numeric draws, and captured assumptions.');
   console.log('Dashboard loads, runs a simulation, changes chart size, and updates assumptions.');
   console.log('Strokes-gained presets, stat weights, and custom fields update the model.');
 });

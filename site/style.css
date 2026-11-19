@@ -99,3 +99,7 @@ h1{font-size:25px}
 .stat-group summary{font-size:12px}
 .stat-guide{margin-top:6px}
 #preset-help{padding:10px;background:#edf5f0;color:#405e4e;margin-top:8px}
+
+.winner-explanation{border-top:1px solid var(--line);margin-top:24px;padding-top:18px;font-size:12px}
+.winner-explanation h3{font-size:13px;margin:18px 0 6px}
+.math-line{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;background:#f3f6f4;padding:10px;overflow-wrap:anywhere}
