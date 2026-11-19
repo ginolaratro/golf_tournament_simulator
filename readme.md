@@ -34,3 +34,13 @@ python3 pga_forecast.py record
 Find event IDs and field sizes with `upcoming`; run `forecast` for each event with a published field. The current year's scoreboard is fetched fresh. A snapshot is saved once to `forecast-records/forecasts/<event-id>.json` and is never overwritten by the command. The event must still be marked scheduled, and the command refuses forecasts at or after ESPN's listed start timestamp (which may be an early date placeholder rather than a tee time). It includes only completed prior tournaments ending before the event's date. Late withdrawals or field changes are not incorporated after the snapshot. Forecasts are local files, not tamper-proof timestamped records; back them up. The `forecast-records` directory is ignored by Git.
 
 After an event is final, `score` saves a separate result for each unscored event in that year; `record` summarizes hits and Brier scores. If a winner joined the field after the snapshot, that winner is scored at zero probability. Forecasts and records do not update automatically: run the commands for each event and after results are final. ESPN availability and field completeness are outside the project's control. The simulation is for individual four-round stroke play; don't use it for team, match play, or starting-strokes events without a format-specific model. It does not model cuts or course changes and provides no proven betting advantage.
+
+## Visual forecast report
+
+Create a self-contained HTML report from any saved forecast and open it in a browser:
+
+```bash
+python3 pga_report.py forecast-records/forecasts/401850981.json --output forecast-records/rsm-report.html
+```
+
+The report charts player win probabilities, explains the simulation, and shows the actual winner if a matching result is supplied. After scoring an event, rebuild with `--result forecast-records/results/401850981.json`. Reports use only the saved forecast and optional result; creating one does not rerun the simulation or require internet access.
