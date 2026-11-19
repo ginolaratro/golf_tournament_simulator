@@ -87,13 +87,17 @@
   function draw() {
     const chart = el('chart'); chart.replaceChildren();
     const displayed = ranking.slice(0, input('show'));
-    const maximum = displayed[0]?.probability || 1;
-    displayed.forEach(p => {
-      const row = make('div', 'bar-row'), name = make('span', 'player-name', p.name); name.title = p.name;
-      const track = make('div', 'track'), bar = make('div', 'bar'); bar.style.width = (100 * p.probability / maximum) + '%'; track.append(bar);
-      row.append(name, track, make('span', 'prob', pct(p.probability))); chart.append(row);
+    displayed.forEach((p, index) => {
+      const player = forecast.players.find(player => player.name === p.name);
+      const row = make('tr', 'forecast-row');
+      row.append(make('td', 'rank', String(index + 1)), make('th', 'player-name', p.name),
+        make('td', 'numeric', format(player.prior_rounds)),
+        make('td', 'numeric', signed(p.skill ?? estimate(player))),
+        make('td', 'numeric prob', pct(p.probability)));
+      row.children[1].scope = 'row'; chart.append(row);
     });
   }
+
   function changed(message) { detail(); el('status').textContent = message || 'Assumptions changed. Run the simulation to update results.'; }
 
   function weightControl(id, label, value, max, onInput, note) {
@@ -203,7 +207,7 @@
         wins[winner]++; completed++;
         recent.push(players[winner].name); if (recent.length > 4) recent.shift();
       }
-      ranking = players.map((p, i) => ({name: p.name, probability: wins[i] / completed})).sort((a, b) => b.probability - a.probability || a.name.localeCompare(b.name));
+      ranking = players.map((p, i) => ({name: p.name, skill: means[i] / 4, probability: wins[i] / completed})).sort((a, b) => b.probability - a.probability || a.name.localeCompare(b.name));
       draw(); el('progress-bar').style.width = (100 * completed / count) + '%';
       el('progress-label').textContent = `${format(completed)} / ${format(count)} tournaments`;
       const chips = el('recent-winners'); chips.replaceChildren();
@@ -231,7 +235,7 @@
     changed('Defaults restored. Run the simulation to update results.');
   });
   fetch('data/model.json').then(response => { if (!response.ok) throw Error(`HTTP ${response.status}`); return response.json(); }).then(data => {
-    forecast = data; ranking = data.players.map(p => ({name: p.name, probability: p.win_probability}));
+    forecast = data; ranking = data.players.map(p => ({name: p.name, skill: p.round_sum / (p.prior_rounds + 20), probability: p.win_probability}));
     fields = (data.stats?.fields || []).map(f => ({...f, ...summarize(data.players.map(p => p.stats?.[f.key]))})).filter(f => f.count);
     el('event-name').textContent = data.event; el('event-date').textContent = `${data.event_start.slice(0, 10)} · ${data.players.length} players · saved ${data.created_at.slice(0, 10)}`;
     if (data.stats) el('stats-note').textContent = `PGA Tour ${data.stats.season} stats retrieved ${data.stats.retrieved_at.slice(0, 10)}${data.stats.after_event_start ? ' — after the event started, so they may include its rounds' : ', before the event started'}.`;
