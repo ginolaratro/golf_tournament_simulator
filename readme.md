@@ -91,3 +91,7 @@ Try **Course plays hard** (approach and recovery emphasis), **Birdie contest**, 
 Switching presets restores round variation, shrinkage and player adjustments, replaces all stat weights, and disables custom-field weights so earlier experiments do not leak into the scenario. Player selection and simulation count are retained. Run the simulation after each change.
 
 The root `vercel.json` publishes only `site/` as the output directory for repository-based deployments. Run the deploy command from the repository root; deploying the repository without this setting serves the dashboard under `/site/` and leaves `/` without a homepage.
+
+### Explaining the forecast leader
+
+The results include a **Show the math** explanation built from numeric inputs and actual simulation counts, with no LLM. It shows the leader's shrunk score history, weighted stat effects, player adjustment, four-round normal score formula, and win-count fraction. A new run also retains the final trial's winning draw and runner-up score. Saved forecasts do not contain individual draws, so those are explicitly unavailable until a new run. The explanation captures the assumptions used for the displayed results; editing controls does not rewrite past results.

@@ -2,7 +2,7 @@
 (() => {
   const el = id => document.getElementById(id);
   const make = (tag, className, text) => { const node = document.createElement(tag); if (className) node.className = className; if (text !== undefined) node.textContent = text; return node; };
-  let forecast, ranking, fields = [];
+  let forecast, ranking, fields = [], resultMeta;
   const weights = new Map(), weightInputs = new Map();
   let customFields = [], customCount = 0;
   const pct = value => (100 * value).toFixed(2) + '%';
@@ -113,6 +113,52 @@
       table.append(row);
     });
   }
+  // Explain stored result inputs, never the sliders that may have changed since a run.
+  function explainResult() {
+    if (!resultMeta || !ranking.length) return;
+    const top = ranking[0], next = ranking[1], box = el('winner-math');
+    box.replaceChildren();
+    el('winner-reason').textContent = resultMeta.saved
+      ? `${top.name} leads the saved forecast with ${pct(top.probability)} win probability across ${format(resultMeta.count)} simulations.`
+      : `${top.name} leads because they won ${format(top.wins)} of ${format(resultMeta.count)} simulated tournaments: ${format(top.wins)} ÷ ${format(resultMeta.count)} × 100 = ${pct(top.probability)}.`;
+    if (next) box.append(make('p', '', `Next: ${next.name}, ${pct(next.probability)}. Players are ranked by simulated wins, not by a language model. Equal win counts are ordered alphabetically; they are tied in probability.`));
+    box.append(make('h3', '', '1. Estimate expected strokes per round'));
+    box.append(make('p', 'math-line', `μ = history influence × score sum ÷ (recorded rounds + prior rounds) + stat effects + player adjustment`));
+    box.append(make('p', 'math-line', `${top.name}: ${top.historyWeight.toFixed(2)} × ${top.roundSum.toFixed(4)} ÷ (${top.rounds} + ${top.prior}) = ${signed(top.history)} history strokes/round.`));
+    if (!top.rounds && !top.prior) box.append(make('p', '', 'With no recorded or prior rounds, history is defined as zero rather than dividing by zero.'));
+    top.terms.forEach(term => box.append(make('p', 'math-line', term)));
+    box.append(make('p', 'math-line', `μ = ${signed(top.history)} history + ${signed(top.statTotal)} stats + ${signed(top.adjustment)} adjustment = ${signed(top.skill)} strokes/round relative to the field. Negative is better. Displayed values are rounded; calculations use full precision.`));
+    box.append(make('h3', '', '2. Draw a four-round tournament score'));
+    box.append(make('p', 'math-line', `Score = 4μ + σZ = ${(4 * top.skill).toFixed(4)} + ${top.sigma.toFixed(4)} × Z; σ = √4 × ${resultMeta.volatility.toFixed(2)} round variation × ${top.multiplier.toFixed(2)} player multiplier.`));
+    box.append(make('p', '', 'Z is a fresh standard normal random draw for each player and tournament. Four independent rounds give a total mean of 4μ and a standard deviation of √4 times the round variation. Scores are relative to the field, not to par. The lowest drawn score wins each trial; exact score ties go to the first player in snapshot order.'));
+    box.append(make('p', 'math-line', 'Random draw: Z = √(−2 ln U) × cos(2πV), where U = 1 − random() and V = random(). Each player gets independent draws.'));
+    box.append(make('h3', '', '3. Count wins across tournaments'));
+    box.append(make('p', 'math-line', 'Win probability = simulated wins ÷ completed tournaments. The forecast leader has the highest estimated probability, not a guaranteed victory.'));
+    if (resultMeta.sample) {
+      const [winner, runner] = resultMeta.sample;
+      box.append(make('h3', '', 'Actual final trial from this run'));
+      box.append(make('p', 'math-line', `${winner.name}: ${winner.mean.toFixed(4)} + ${winner.sigma.toFixed(4)} × (${winner.z.toFixed(4)}) = ${winner.score.toFixed(4)} strokes.`));
+      if (runner) box.append(make('p', '', `Runner-up ${runner.name}: ${runner.score.toFixed(4)} strokes. ${winner.name} won this trial with the lowest score among all ${forecast.players.length} players. A single trial winner can differ from the overall forecast leader.`));
+    } else box.append(make('p', '', 'Individual trial draws were not stored in the saved forecast. Run a new simulation to see a real trial example.'));
+    box.append(make('p', 'help', 'This explanation is assembled directly from numeric model inputs and simulation counts. No LLM or generated reasoning is used. Random sampling causes small differences between runs; the model does not simulate cuts or playoffs.'));
+  }
+  function resultInputs(player, saved = false) {
+    const historyWeight = saved ? 1 : input('skill'), prior = saved ? 20 : input('prior');
+    const history = historyWeight * (player.prior_rounds + prior ? player.round_sum / (player.prior_rounds + prior) : 0);
+    const effects = saved ? [] : statEffects(player).filter(e => (e.custom ? e.field.weight : weights.get(e.field.key)));
+    const terms = effects.map(e => {
+      const f = e.field, weight = e.custom ? f.weight : weights.get(f.key);
+      if (typeof e.value !== 'number' || !Number.isFinite(e.value)) return `${f.label}: missing value → 0 effect (field average).`;
+      const scale = perStroke(f) ? '' : ` ÷ ${f.sd.toFixed(4)} SD`;
+      if (!perStroke(f) && !f.sd) return `${f.label}: no spread in values → 0 effect.`;
+      return `${f.label}: −${weight.toFixed(2)} × ${f.higher_is_better ? '1' : '(−1)'} × (${e.value.toFixed(4)} − ${f.mean.toFixed(4)})${scale} = ${signed(e.effect)} strokes/round.`;
+    });
+    const multiplier = saved ? 1 : (player.id === el('player').value ? input('player-volatility') : 1);
+    return {historyWeight, prior, history, rounds: player.prior_rounds, roundSum: player.round_sum, terms,
+      statTotal: effects.reduce((sum, e) => sum + e.effect, 0), adjustment: saved ? 0 : adjustment(player),
+      multiplier, sigma: 2 * (saved ? 2.8 : input('volatility')) * multiplier};
+  }
+
   function draw() {
     const chart = el('chart'); chart.replaceChildren();
     const displayed = ranking.slice(0, input('show'));
@@ -125,9 +171,10 @@
         make('td', 'numeric prob', pct(p.probability)));
       row.children[1].scope = 'row'; chart.append(row);
     });
+    explainResult();
   }
 
-  function changed(message) { detail(); el('status').textContent = message || 'Assumptions changed. Run the simulation to update results.'; }
+  function changed(message) { el('math-status').textContent = 'Settings changed. The explanation still describes the displayed results; run the simulation to update both.'; detail(); el('status').textContent = message || 'Assumptions changed. Run the simulation to update results.'; }
 
   function weightControl(id, label, value, max, onInput, note) {
     const wrap = make('div', 'weight');
@@ -226,7 +273,10 @@
 
   function run() {
     const count = input('runs'), volatility = input('volatility'), players = forecast.players;
+    const captured = players.map(p => resultInputs(p));
     const means = players.map(p => 4 * estimate(p));
+    resultMeta = {count: 0, volatility, saved: false};
+    el('math-status').textContent = 'Explanation follows this simulation as it runs.';
     const sigmas = players.map(p => 2 * volatility * (p.id === el('player').value ? input('player-volatility') : 1));
     const wins = new Array(players.length).fill(0), recent = [];
     let completed = 0;
@@ -236,21 +286,27 @@
       // Each winner comes from a full independent tournament draw.
       while (completed < target) {
         let best = Infinity, winner = 0;
+        const finalTrial = completed === count - 1 ? [] : null;
         for (let i = 0; i < players.length; i++) {
           const u = 1 - Math.random(), v = Math.random();
-          const score = means[i] + sigmas[i] * Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+          const z = Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+          const score = means[i] + sigmas[i] * z;
+          if (finalTrial) finalTrial.push({name: players[i].name, mean: means[i], sigma: sigmas[i], z, score});
           if (score < best) { best = score; winner = i; }
         }
+        if (finalTrial) resultMeta.sample = finalTrial.sort((a, b) => a.score - b.score).slice(0, 2);
         wins[winner]++; completed++;
         recent.push(players[winner].name); if (recent.length > 4) recent.shift();
       }
-      ranking = players.map((p, i) => ({name: p.name, skill: means[i] / 4, probability: wins[i] / completed})).sort((a, b) => b.probability - a.probability || a.name.localeCompare(b.name));
+      ranking = players.map((p, i) => ({...captured[i], name: p.name, skill: means[i] / 4, wins: wins[i], probability: wins[i] / completed})).sort((a, b) => b.probability - a.probability || a.name.localeCompare(b.name));
+      resultMeta.count = completed;
       draw(); el('progress-bar').style.width = (100 * completed / count) + '%';
       el('progress-label').textContent = `${format(completed)} / ${format(count)} tournaments`;
       const chips = el('recent-winners'); chips.replaceChildren();
       recent.slice().reverse().forEach(name => chips.append(make('span', '', name)));
       el('result-summary').textContent = `Your experiment · ${format(completed)} of ${format(count)} tournaments${completed < count ? ' · in progress' : ''}`;
       if (completed < count) { setTimeout(batch, 30); return; }
+      el('math-status').textContent = 'Explanation for the completed simulation.';
       el('status').textContent = 'Simulation complete. Adjust and run again to compare.';
       el('settings').disabled = false; el('reset').disabled = false; el('run').disabled = false;
     }
@@ -272,7 +328,8 @@
     changed('Defaults restored. Run the simulation to update results.');
   });
   fetch('data/model.json').then(response => { if (!response.ok) throw Error(`HTTP ${response.status}`); return response.json(); }).then(data => {
-    forecast = data; ranking = data.players.map(p => ({name: p.name, skill: p.round_sum / (p.prior_rounds + 20), probability: p.win_probability}));
+    forecast = data; resultMeta = {saved: true, count: data.simulations, volatility: 2.8};
+    ranking = data.players.map(p => ({...resultInputs(p, true), name: p.name, skill: p.round_sum / (p.prior_rounds + 20), probability: p.win_probability})).sort((a, b) => b.probability - a.probability || a.name.localeCompare(b.name));
     fields = (data.stats?.fields || []).map(f => ({...f, ...summarize(data.players.map(p => p.stats?.[f.key]))})).filter(f => f.count);
     el('event-name').textContent = data.event; el('event-date').textContent = `${data.event_start.slice(0, 10)} · ${data.players.length} players · saved ${data.created_at.slice(0, 10)}`;
     if (data.stats) el('stats-note').textContent = `PGA Tour ${data.stats.season} stats retrieved ${data.stats.retrieved_at.slice(0, 10)}${data.stats.after_event_start ? ' — after the event started, so they may include its rounds' : ', before the event started'}.`;
