@@ -19,3 +19,18 @@ The study uses only tournaments that ended before the target event began, includ
 The CSV is a **retrospective** record: it is regenerated from historical data, not a timestamped archive of forecasts made before play. To track genuine future performance, save predictions and the field before the event starts, then compare that immutable snapshot with official results after it finishes. No automatic live forecast or results reconciliation is implemented yet.
 
 Data source: [ESPN PGA scoreboard](https://site.api.espn.com/apis/site/v2/sports/golf/pga/scoreboard?dates=2024&limit=500), an unofficial public endpoint that can change or be unavailable. Check the provider's terms before redistributing data. For richer round-level strokes-gained and stable player identifiers, [Data Golf's API](https://datagolf.com/api-access) is a possible licensed source; access and historical coverage depend on its subscription.
+
+## Pre-tournament forecasts and tracking
+
+The separate forecast workflow saves a local snapshot before an event, then compares it with the final ESPN result. For example:
+
+```bash
+python3 pga_forecast.py upcoming --year 2026
+python3 pga_forecast.py forecast --year 2026 --event-id 401850981 --history-start 2022 --simulations 10000
+python3 pga_forecast.py score --year 2026
+python3 pga_forecast.py record
+```
+
+Find event IDs and field sizes with `upcoming`; run `forecast` for each event with a published field. The current year's scoreboard is fetched fresh. A snapshot is saved once to `forecast-records/forecasts/<event-id>.json` and is never overwritten by the command. The event must still be marked scheduled, and the command refuses forecasts at or after ESPN's listed start timestamp (which may be an early date placeholder rather than a tee time). It includes only completed prior tournaments ending before the event's date. Late withdrawals or field changes are not incorporated after the snapshot. Forecasts are local files, not tamper-proof timestamped records; back them up. The `forecast-records` directory is ignored by Git.
+
+After an event is final, `score` saves a separate result for each unscored event in that year; `record` summarizes hits and Brier scores. If a winner joined the field after the snapshot, that winner is scored at zero probability. Forecasts and records do not update automatically: run the commands for each event and after results are final. ESPN availability and field completeness are outside the project's control. The simulation is for individual four-round stroke play; don't use it for team, match play, or starting-strokes events without a format-specific model. It does not model cuts or course changes and provides no proven betting advantage.
