@@ -45,13 +45,17 @@ python3 pga_report.py forecast-records/forecasts/401850981.json --output forecas
 
 The report charts player win probabilities, explains the simulation, and shows the actual winner if a matching result is supplied. After scoring an event, rebuild with `--result forecast-records/results/401850981.json`. Reports use only the saved forecast and optional result; creating one does not rerun the simulation or require internet access.
 
-## Vercel dashboard
+## Interactive Vercel dashboard
 
-`site/` contains a static, Vercel-ready copy of the forecast dashboard. It displays the saved snapshot in `site/data/current.json`; it does not fetch new forecasts or results automatically. To publish a later forecast, copy its saved JSON to that path, then regenerate the page before deploying:
+`site/` contains a static interactive model lab. The initial chart shows a saved forecast. Changing variation, prior strength, or a player's score adjustment and clicking **Run simulation** runs new Monte Carlo trials in the visitor's browser. Experiments are not saved and are not pre-event forecasts. Results vary slightly between runs due to random sampling.
+
+The field and historical inputs in `site/data/model.json` are a fixed snapshot, not a live field or automatically updated data feed. To update it with a saved forecast, reconstruct historical inputs and redeploy:
 
 ```bash
-python3 pga_report.py site/data/current.json --output site/index.html
-vercel deploy site --prod
+python3 export_dashboard.py forecast-records/forecasts/EVENT_ID.json --history-start 2022
+vercel deploy site --prod --project golf-tournament-forecast
 ```
 
-To include a scored result, add `--result forecast-records/results/EVENT_ID.json` to the report command. The JSON and generated HTML are public when deployed; only copy data intended to be public. The page displays the snapshot time and must be rebuilt and redeployed to reflect changes.
+The exporter checks that historical round counts match the saved forecast and refuses mismatches. This check cannot detect source revisions that preserve round counts; preserve original data snapshots if exact historical reproducibility matters. The model inputs are published when deployed. The standalone report from `pga_report.py` remains available separately.
+
+Run `node tests/test_dashboard.js` to check the browser dashboard logic without a browser.
