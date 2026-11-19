@@ -44,3 +44,14 @@ python3 pga_report.py forecast-records/forecasts/401850981.json --output forecas
 ```
 
 The report charts player win probabilities, explains the simulation, and shows the actual winner if a matching result is supplied. After scoring an event, rebuild with `--result forecast-records/results/401850981.json`. Reports use only the saved forecast and optional result; creating one does not rerun the simulation or require internet access.
+
+## Vercel dashboard
+
+`site/` contains a static, Vercel-ready copy of the forecast dashboard. It displays the saved snapshot in `site/data/current.json`; it does not fetch new forecasts or results automatically. To publish a later forecast, copy its saved JSON to that path, then regenerate the page before deploying:
+
+```bash
+python3 pga_report.py site/data/current.json --output site/index.html
+vercel deploy site --prod
+```
+
+To include a scored result, add `--result forecast-records/results/EVENT_ID.json` to the report command. The JSON and generated HTML are public when deployed; only copy data intended to be public. The page displays the snapshot time and must be rebuilt and redeployed to reflect changes.
