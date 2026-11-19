@@ -3,6 +3,7 @@ const vm = require('vm');
 const assert = require('assert');
 class Element {
   constructor(id) { this.id=id; this.value=''; this.children=[]; this.listeners={}; this.style={}; this.textContent=''; }
+  setAttribute(name, value) { this[name] = value; }
   addEventListener(type, fn) { this.listeners[type]=fn; }
   append(...nodes) { this.children.push(...nodes); }
   replaceChildren() { this.children=[]; }
@@ -53,6 +54,34 @@ setImmediate(()=>{
   const approach = find(weights,'w-sg_app'); approach.value='1'; approach.listeners.input();
   assert.equal(elements['preset'].value,'custom');
   assert(elements['player-stats'].children.length > 10);
+  // Scenario changes are complete and repeatable, including targeted rookie assumptions.
+  elements['preset'].value='rookie'; elements['preset'].listeners.change();
+  assert.equal(elements['adjustment'].value, -0.3);
+  assert.equal(elements['player-volatility'].value, 1.2);
+  assert.equal(elements['prior'].value, 30);
+  assert.equal(elements['player-adjustments'].open, true);
+  assert(elements['preset-help'].textContent.includes('cannot predict'));
+  const rookieFormula = elements['formula'].textContent;
+  assert(rookieFormula.includes('Adjustment: -0.30'));
+  elements['preset'].value='hard'; elements['preset'].listeners.change();
+  assert.equal(elements['adjustment'].value, 0);
+  assert.equal(elements['player-volatility'].value, 1);
+  assert.equal(elements['prior'].value, 20);
+  assert.equal(find(weights,'w-sg_app').value, '0.7');
+  assert.equal(find(weights,'w-sg_total').value, '0');
+  assert(elements['preset-help'].textContent.includes('not scoring relative to par'));
+  for (const field of model.stats.fields) {
+    const slider = find(weights, 'w-' + field.key);
+    assert(slider['aria-describedby']);
+    assert(find(weights, slider['aria-describedby']).textContent.length > 40);
+  }
+  elements['volatility'].value='3.5'; elements['volatility'].listeners.input();
+  assert.equal(elements['preset'].value,'custom');
+  elements['preset'].value='birdies'; elements['preset'].listeners.change();
+  assert.equal(find(weights,'w-birdie_average').value,'0.15');
+  elements['preset'].value='history'; elements['preset'].listeners.change();
+  assert.equal(elements['volatility'].value,2.8);
+  assert.equal(find(weights,'w-birdie_average').value,'0');
   // Custom fields: paste values, match names (accents and case ignored), and weight them.
   const first = model.players[0];
   elements['player'].value = first.id; elements['player'].listeners.change();

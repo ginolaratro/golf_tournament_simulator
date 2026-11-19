@@ -17,11 +17,40 @@
     ['course_fit', 'Course fit', "Strokes per round for one standard deviation better on PGA Tour's course-fit score."],
   ];
   const PRESETS = {
-    history: {skill: 1, weights: {}},
+    history: {skill: 1, weights: {}, description: 'Recommended baseline: use saved score history. All extra stats stay at zero to avoid counting the same skill twice.'},
+    hard: {skill: 0.5, weights: {sg_app: 0.7, sg_arg: 0.3, sg_ott: 0.4}, description: 'What if the course plays hard? This hypothesis favors approach play, recovery and tee shots. It changes relative player strengths, not scoring relative to par; difficulty alone does not imply more upsets.'},
+    birdies: {skill: 0.5, weights: {sg_app: 0.5, sg_putt: 0.3, birdie_average: 0.15}, description: 'What if it becomes a birdie contest? Modestly favor approach play, putting and birdie production. These inputs overlap; treat this as an experiment.'},
+    rookie: {skill: 0.5, settings: {prior: 30, adjustment: -0.3, 'player-volatility': 1.2}, weights: {}, description: 'What if a rookie contends? Choose a player you know is a rookie under Player adjustments. Give that player a hypothetical −0.3 strokes per round and 1.2× uncertainty; use 30 prior rounds to temper short histories. The snapshot has no rookie labels. This cannot predict whether a rookie enters or tees off, and low prior rounds do not establish rookie status.'},
     sg: {skill: 0.5, weights: {sg_ott: 0.5, sg_app: 0.5, sg_arg: 0.5, sg_putt: 0.3}},
     ballstriking: {skill: 0.5, weights: {sg_ott: 0.7, sg_app: 0.8, sg_arg: 0.3, sg_putt: 0.1}},
     form: {skill: 0.5, weights: {form_sg_ott: 0.4, form_sg_app: 0.4, form_sg_arg: 0.4, form_sg_putt: 0.2}},
   };
+
+  const STAT_GUIDE = {
+    ott: ['Tee-shot performance, including distance and accuracy.', '0.3–0.5× in a blend; try 0.7× for a ball-striking hypothesis.'],
+    app: ['Iron and approach-shot performance.', '0.4–0.5× in a blend; try 0.7–0.8× when approach play matters more.'],
+    arg: ['Recovery shots around the green, excluding putts.', '0.2–0.3× in a blend.'],
+    putt: ['Performance on the greens.', '0.1–0.3× in a blend to limit sensitivity to putting swings.'],
+    total: ['All strokes-gained categories combined.', 'Start at 0; try 0.5× instead of individual categories, never on top of them.'],
+    t2g: ['Off-the-tee, approach and around-the-green combined.', 'Start at 0; try 0.5× instead of those three categories.'],
+    driving_distance: ['Average measured tee-shot distance; higher is better.', 'Start at 0; try 0.1–0.2 strokes/SD for a distance hypothesis.'],
+    driving_accuracy: ['Share of measured fairways hit; higher is better.', 'Start at 0; try 0.1–0.2 strokes/SD for a fairway hypothesis.'],
+    gir: ['Share of greens reached in regulation; higher is better.', 'Start at 0; try 0.1–0.2 strokes/SD instead of extra approach weight.'],
+    scrambling: ['Par-or-better rate after missing a green in regulation; higher is better.', 'Start at 0; try 0.1–0.2 strokes/SD instead of extra recovery weight.'],
+    birdie_average: ['Birdies made per round; higher is better.', 'Start at 0; try 0.15 strokes/SD for a birdie contest.'],
+    bogey_rate: ['Share of holes ending in bogey; lower is better.', 'Start at 0; try 0.1–0.2 strokes/SD for bogey avoidance.'],
+    scoring_average: ['Adjusted scoring average; lower is better.', 'Keep at 0 with score history; try 0.2 strokes/SD only as an alternative.'],
+    course_fit: ['PGA Tour’s event-specific fit rating; lower is better.', 'Start at 0; try 0.1–0.2 strokes/SD as a small course-fit overlay.'],
+  };
+  function statGuide(field) {
+    const recent = field.key.startsWith('form_');
+    const key = field.key.replace(/^form_sg_|^sg_/, '');
+    const guide = STAT_GUIDE[key] || ['Difference from the field average.', 'Start at 0; try a small weight.'];
+    return guide[0] + (recent ? ' Measured over the last five starts. Start at 0; try 0.2–0.4× instead of the matching season stat (0.1–0.2× for putting).' : ' Suggested experiment: ' + guide[1]);
+  }
+  function presetDescription(name) {
+    el('preset-help').textContent = PRESETS[name]?.description || ({sg: 'Balanced experiment: reduce score history to 0.5× and add season strokes gained. Category weights are illustrative, not fitted.', ballstriking: 'Favor tee shots and approaches; reduce putting influence. A hypothesis to compare with the baseline.', form: 'Favor the last five starts rather than season stats. Short samples can swing substantially.'}[name]) || 'Custom assumptions. Compare your results with the score-history baseline.';
+  }
 
   function normalizeName(name) {
     return String(name).normalize('NFKD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/'/g, '')
@@ -120,13 +149,16 @@
     if (!fields.length) { box.append(make('p', 'help', 'This snapshot has no strokes-gained data. Re-export it with stats to enable these fields.')); return; }
     GROUPS.forEach(([group, title, help]) => {
       const groupFields = fields.filter(f => f.group === group); if (!groupFields.length) return;
-      const section = make('div', 'stat-group'); section.append(make('h3', '', title), make('p', 'help', help));
+      const section = make('details', 'stat-group'); section.append(make('summary', '', title), make('p', 'help', help));
       groupFields.forEach(f => {
         const note = perStroke(f) ? '' : ' strokes/SD';
         const control = weightControl('w-' + f.key, `${f.label} (${f.count}/${forecast.players.length})`, 0, perStroke(f) ? 1.5 : 1,
-          value => { weights.set(f.key, value); el('preset').value = 'custom'; changed(); }, note);
+          value => { weights.set(f.key, value); el('preset').value = 'custom'; presetDescription('custom'); changed(); }, note);
         if (note) control.wrap.append(make('span', 'unit', 'strokes per round per SD'));
-        if (f.description) control.wrap.title = f.description;
+        const guide = make('p', 'help stat-guide', statGuide(f)); guide.id = 'guide-' + f.key;
+        control.range.setAttribute('aria-describedby', guide.id);
+        control.wrap.append(guide);
+        if (f.description) control.wrap.append(make('p', 'help', f.description));
         weightInputs.set(f.key, control); section.append(control.wrap);
       });
       box.append(section);
@@ -135,6 +167,11 @@
   function applyPreset(name) {
     const preset = PRESETS[name]; if (!preset) return;
     fields.forEach(f => setWeight(f.key, preset.weights[f.key] || 0));
+    const defaults = {volatility: 2.8, prior: 20, adjustment: 0, 'player-volatility': 1};
+    Object.entries({...defaults, ...preset.settings}).forEach(([id, value]) => { el(id).value = value; showSlider(id); });
+    customFields.forEach(f => { f.weight = 0; }); renderCustomFields(); saveCustomFields();
+    presetDescription(name);
+    if (name === 'rookie') el('player-adjustments').open = true;
     el('skill').value = preset.skill; el('skill-value').textContent = Number(preset.skill).toFixed(1);
   }
 
@@ -222,7 +259,7 @@
 
   const SLIDERS = ['volatility', 'prior', 'skill', 'adjustment', 'player-volatility'];
   const showSlider = id => { el(id + '-value').textContent = id === 'prior' ? input(id) : input(id).toFixed(1); };
-  SLIDERS.forEach(id => el(id).addEventListener('input', () => { showSlider(id); if (id === 'skill') el('preset').value = 'custom'; changed(); }));
+  SLIDERS.forEach(id => el(id).addEventListener('input', () => { showSlider(id); el('preset').value = 'custom'; presetDescription('custom'); changed(); }));
   el('player').addEventListener('change', () => changed('Player changed. Run the simulation to update results.'));
   el('preset').addEventListener('change', () => { applyPreset(el('preset').value); changed('Preset applied. Run the simulation to update results.'); });
   el('custom-add').addEventListener('click', onAddCustom);
@@ -241,7 +278,7 @@
     if (data.stats) el('stats-note').textContent = `PGA Tour ${data.stats.season} stats retrieved ${data.stats.retrieved_at.slice(0, 10)}${data.stats.after_event_start ? ' — after the event started, so they may include its rounds' : ', before the event started'}.`;
     for (const p of [...data.players].sort((a, b) => a.name.localeCompare(b.name))) { const option = make('option', '', p.name); option.value = p.id; el('player').append(option); }
     el('player').value = data.players[0].id;
-    buildStatControls(); loadCustomFields();
+    buildStatControls(); loadCustomFields(); presetDescription('history');
     el('result-summary').textContent = `Original saved forecast · ${format(data.simulations)} simulated tournaments`; detail(); draw(); el('run').disabled = false; el('status').textContent = 'Ready to explore.';
   }).catch(error => { el('chart').textContent = 'Could not load model data. Please refresh the page.'; el('status').textContent = `Could not load data: ${error.message}`; el('run').disabled = true; });
 })();

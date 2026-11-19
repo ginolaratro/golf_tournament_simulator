@@ -93,3 +93,9 @@ h1{font-size:25px}
 
 .results{min-width:0}
 @media(max-width:520px){.forecast-table th:nth-child(3),.forecast-table td:nth-child(3){display:none}.forecast-table{font-size:12px}.forecast-table th,.forecast-table td{padding:10px 7px}.forecast-table thead{font-size:9px}.result-heading h2{font-size:18px}.stage-heading{gap:8px}.pill{white-space:nowrap}.rank{width:30px}}
+
+.control-category{font-size:12px;color:var(--green);margin:22px 0 8px}
+.stat-group{border-top:1px solid var(--line);padding:12px 0}
+.stat-group summary{font-size:12px}
+.stat-guide{margin-top:6px}
+#preset-help{padding:10px;background:#edf5f0;color:#405e4e;margin-top:8px}
