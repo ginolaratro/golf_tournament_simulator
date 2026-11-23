@@ -56,7 +56,7 @@ The report charts player win probabilities, explains the simulation, and shows t
 
 ## Interactive Vercel dashboard
 
-`site/` contains a static interactive model lab. The initial chart shows a saved forecast. Changing variation, prior strength, historical skill influence, or a selected player's score and volatility adjustments and clicking **Run simulation** runs new Monte Carlo trials in the visitor's browser. The progress bar, recent winners, and probabilities update from actual simulation batches. Experiments are not saved and are not pre-event forecasts. Results vary slightly between runs due to random sampling.
+`site/` contains a static interactive model lab. The initial chart shows a saved forecast. Changing variation, prior strength, historical skill influence, or a selected player's score and volatility adjustments and clicking **Run simulation** runs new Monte Carlo trials in the visitor's browser. The progress bar, recent winners, and probabilities update from actual simulation batches. Experiments are not saved and are not pre-event forecasts. During the event, a live panel updates win probabilities from real scoring (see below). Results vary slightly between runs due to random sampling.
 
 The field and historical inputs in `site/data/model.json` are a fixed snapshot, not a live field or automatically updated data feed. To update it with a saved forecast, reconstruct historical inputs and redeploy:
 
@@ -68,6 +68,20 @@ vercel deploy --prod --project golf-tournament-forecast
 The exporter checks that historical round counts match the saved forecast and refuses mismatches. This check cannot detect source revisions that preserve round counts; preserve original data snapshots if exact historical reproducibility matters. The model inputs are published when deployed. The standalone report from `pga_report.py` remains available separately.
 
 Run `node tests/test_dashboard.js` to check the browser dashboard logic without a browser.
+
+### Live in-play forecast
+
+Once the saved event starts, the dashboard switches to a **Live** panel above the model lab. It loads ESPN's hole-by-hole scoring every minute (when the tab is visible; turn auto-refresh off or use **Refresh now**) and replays the rest of the tournament 10,000 times from the official scores:
+
+- Each player still in the field keeps their actual score to par. Their remaining holes are drawn around the field's average score per hole this week plus their model skill ÷ 18, with round variation scaled by √(holes left ÷ 18). Players who missed the cut or withdrew can't win.
+- **Update skill with this week's completed rounds** (on by default) adds this week's field-relative rounds to each player's history, using the same shrinkage as the pre-event model.
+- Ties after 72 holes go to a simulated sudden-death playoff. When ESPN marks the event final, the official winner is shown at 100%.
+- The leaderboard shows position, score, holes played, projected finish, pre-event win %, live win %, change, and top-10 chance. The leader callout shows the projection arithmetic.
+- **Win probability through the tournament** re-simulates the field from the scores at every six-hole checkpoint all remaining players have reached, so the chart is complete even if you open the page on Sunday.
+
+The live model uses the lab's current settings (round variation, prior, stat weights, player adjustments); after changing them, run the simulation or wait for the next refresh. Scores come from `api/live.js`, a Vercel function that fetches ESPN's scoreboard, trims it to the fields the model needs and caches it at the edge for 30 seconds. On a plain static server the page calls ESPN directly. ESPN's feed is unofficial, can lag the broadcast, and blocks some automated browsers. The live model doesn't know tee-time waves, weather or hole difficulty, and treats every remaining hole as equally hard.
+
+`node tests/test_live.js` checks the live model against a recorded ESPN response from after round 3 of the 2026 RSM Classic (`tests/fixtures/espn-live-rsm-r3.json`).
 
 ### Strokes gained, stats and custom fields
 
