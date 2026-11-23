@@ -6,14 +6,20 @@ class Element {
   setAttribute(name, value) { this[name] = value; }
   addEventListener(type, fn) { this.listeners[type]=fn; }
   append(...nodes) { this.children.push(...nodes); }
+  prepend(...nodes) { this.children.unshift(...nodes); }
+  querySelector() { return null; }
   replaceChildren() { this.children=[]; }
 }
 const elements = {};
 const document = { getElementById: id => elements[id] ||= new Element(id), createElement: () => new Element() };
-for (const [id,value] of Object.entries({preset:'history',volatility:'2.8',prior:'20',adjustment:'0',skill:'1', 'player-volatility':'1',runs:'1000',show:'10'})) document.getElementById(id).value=value;
+for (const [id,value] of Object.entries({preset:'history',volatility:'2.8',prior:'20',adjustment:'0',skill:'1', 'player-volatility':'1',runs:'1000',show:'10','live-show':'20'})) document.getElementById(id).value=value;
 const model=JSON.parse(fs.readFileSync('site/data/model.json','utf8'));
-const context={document,fetch:async()=>({ok:true,json:async()=>model}),setTimeout:fn=>fn(),console,Math:Object.assign(Object.create(Math), {random: () => 0.5})};
-vm.runInNewContext(fs.readFileSync('site/app.js','utf8'),context);
+const liveFixture=JSON.parse(fs.readFileSync('tests/fixtures/espn-live-rsm-r3.json','utf8'));
+const fetched=[];
+const context={document,fetch:async url=>{fetched.push(url);return {ok:true,json:async()=>url.includes('dates=')?liveFixture:model};},setTimeout:fn=>fn(),console,Math:Object.assign(Object.create(Math), {random: () => 0.5})};
+vm.createContext(context);
+vm.runInContext(fs.readFileSync('site/live.js','utf8'),context);
+vm.runInContext(fs.readFileSync('site/app.js','utf8'),context);
 setImmediate(()=>{
   assert.equal(elements['chart'].children.length,10);
   assert.equal(elements['event-name'].textContent,'The RSM Classic');
@@ -128,6 +134,24 @@ setImmediate(()=>{
   elements['adjustment'].value='1'; elements['adjustment'].listeners.input();
   elements['show'].listeners.change();
   assert.equal(flatten(elements['winner-math']), explanation, 'Result explanation retains captured inputs');
+  // Live scoring: the panel loads ESPN scores for this event and simulates only the remaining holes.
+  assert(fetched.some(url => url === '/api/live?dates=20261119'), fetched.join(','));
+  assert.equal(elements['live-panel'].hidden, false);
+  assert.equal(elements['mode-pill'].textContent, '● Live');
+  assert(elements['live-round'].textContent.includes('ROUND 3'));
+  assert(elements['live-summary'].textContent.startsWith('66 players still in the field'));
+  const board = elements['live-board'].children;
+  assert.equal(board.length, 20);
+  const leaders = board.slice(0, 2).map(row => row.children[1].textContent);
+  assert(leaders.every(name => ['Rasmus Højgaard', 'Michael Thorbjornsen', 'Max Greyserman'].includes(name)), leaders.join());
+  assert(board.every(row => !['CUT', 'WD'].includes(row.children[0].textContent)));
+  assert.equal(board.find(row => row.children[1].textContent === 'Rasmus Højgaard').children[2].textContent, '-13');
+  assert(flatten(elements['live-leader']).includes('Projected finish'));
+  assert(elements['live-chart'].innerHTML.includes('<path'), 'Win probability chart is drawn');
+  assert.equal(elements['live-legend'].children.length, 5);
+  elements['live-show'].value='10'; elements['live-show'].listeners.change();
+  assert.equal(elements['live-board'].children.length, 10);
+  console.log('Live panel loads ESPN scores, excludes cut players, and charts win probability.');
   console.log('Winner explanation shows exact counts, numeric draws, and captured assumptions.');
   console.log('Dashboard loads, runs a simulation, changes chart size, and updates assumptions.');
   console.log('Strokes-gained presets, stat weights, and custom fields update the model.');
